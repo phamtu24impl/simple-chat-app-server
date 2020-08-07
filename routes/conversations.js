@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
       path: 'messages',
       options: {
         limit: 1,
-        sort: { created: -1 },
+        sort: { createdAt: -1 },
       },
     })
   res.send(
