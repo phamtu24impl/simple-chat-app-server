@@ -6,6 +6,7 @@ require('dotenv').config()
 
 const userRouter = require('./routes/users')
 const conversationRouter = require('./routes/conversations')
+const messageRouter = require('./routes/messages')
 const { User } = require('./models/user')
 require('./config/db')
 
@@ -28,5 +29,10 @@ app.use(async (req, res, next) => {
 
 app.use('/users', userRouter)
 app.use('/conversations', conversationRouter)
+app.use('/messages', messageRouter)
+
+app.use((err, req, res) => {
+  res.status(500).send({ message: `${err.message}\n\n${err.stack}` })
+})
 
 module.exports = app
