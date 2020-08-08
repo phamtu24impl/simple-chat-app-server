@@ -5,6 +5,7 @@ const { Conversation } = require('../models/conversation')
 const { User } = require('../models/user')
 
 const errorBoundary = require('./errorBoundary')
+const socket = require('../socket')
 
 const router = express.Router()
 
@@ -23,6 +24,10 @@ router.post(
 
     const otherMembers = await User.find().byUsername(req.body.members)
     const conversation = await findOrCreateConversation([...otherMembers, req.currentUser])
+
+    otherMembers.forEach((member) => {
+      socket.io.to(`${member._id}/conversations`).emit('newConversation', { conversation })
+    })
     res.send(conversation)
   })
 )
@@ -66,6 +71,14 @@ router.post(
     await message.save()
     conversation.messages.push(message)
     await conversation.save()
+    socket.io.to(`conversations/${conversation._id}`).emit('newMessage', { conversation, message })
+    conversation.members.forEach((member) => {
+      if (member._id.equals(req.currentUser._id)) {
+        return
+      }
+
+      socket.io.to(`${member._id}/conversations`).emit('newLatestMessage', { conversation, message })
+    })
     res.send(message)
   })
 )

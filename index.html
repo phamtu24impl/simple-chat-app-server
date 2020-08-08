@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"
+      integrity="sha512-v8ng/uGxkge3d1IJuEo6dJP8JViyvms0cly9pnbfRxT6/31c3dRWxIiwGnMSWwZjHKOuY3EVmijs7k1jz/9bLA=="
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const socket = io('http://localhost:3000', {
+        query: {
+          userId: '5f2e4a9e656e3500296b2c0a',
+        },
+      })
+      socket.emit('joinConversation', { id: '5f2e4aa7656e3500296b2c0c' })
+      socket.on('newMessage', (data) => {
+        console.log('newMessage', data)
+      })
+      socket.on('newLatestMessage', (data) => {
+        console.log('newLatestMessage', data)
+      })
+      socket.on('newConversation', (data) => {
+        console.log('newConversation', data)
+      })
+    </script>
+  </body>
+</html>
