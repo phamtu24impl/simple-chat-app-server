@@ -18,6 +18,11 @@ class Socket {
     })
 
     io.on('connection', (socket) => {
+      if (!socket.currentUser) {
+        console.log('reject connection', socket.id)
+        return socket.disconnect()
+      }
+
       const currentUserId = socket.currentUser._id
 
       console.log('socket connected', currentUserId)
