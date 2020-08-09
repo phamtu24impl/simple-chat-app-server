@@ -13,6 +13,10 @@ router.post(
   '/',
   errorBoundary(async (req, res) => {
     const findOrCreateConversation = async (members) => {
+      if (members.length === 1) {
+        throw new Error('No user found')
+      }
+
       const allConversations = await Conversation.find({})
         .populate('members')
         .populate({
