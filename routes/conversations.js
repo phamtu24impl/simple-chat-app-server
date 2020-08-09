@@ -39,6 +39,7 @@ router.get(
       .populate('members')
       .populate({
         path: 'messages',
+        populate: ['sender', 'seenBy'],
         options: {
           limit: 1,
           sort: { createdAt: -1 },
