@@ -13,7 +13,15 @@ router.post(
   '/',
   errorBoundary(async (req, res) => {
     const findOrCreateConversation = async (members) => {
-      const allConversations = await Conversation.find({}).populate('members')
+      const allConversations = await Conversation.find({})
+        .populate('members')
+        .populate({
+          path: 'messages',
+          populate: ['seenBy', 'sender'],
+          options: {
+            sort: { createdAt: -1 },
+          },
+        })
       const matchedConversation = allConversations.find((conversation) =>
         // eslint-disable-next-line no-underscore-dangle
         conversation.members.every((member) => members.some((currentMember) => currentMember._id.equals(member._id)))
@@ -59,7 +67,13 @@ router.get(
 router.get(
   '/:id/messages',
   errorBoundary(async (req, res) => {
-    const conversation = await Conversation.findById(req.params.id).populate('messages')
+    const conversation = await Conversation.findById(req.params.id).populate({
+      path: 'messages',
+      populate: ['seenBy', 'sender'],
+      options: {
+        sort: { createdAt: -1 },
+      },
+    })
     res.send(conversation.messages)
   })
 )
