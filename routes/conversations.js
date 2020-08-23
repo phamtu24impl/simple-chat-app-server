@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 const express = require('express')
 
 const { Message } = require('../models/message')
@@ -71,14 +72,16 @@ router.get(
 router.get(
   '/:id/messages',
   errorBoundary(async (req, res) => {
-    const conversation = await Conversation.findById(req.params.id).populate({
-      path: 'messages',
-      populate: ['seenBy', 'sender'],
-      options: {
-        sort: { createdAt: -1 },
-      },
-    })
-    res.send(conversation.messages)
+    const conversation = await Conversation.findById(req.params.id)
+      .populate('members')
+      .populate({
+        path: 'messages',
+        populate: ['seenBy', 'sender'],
+        options: {
+          sort: { createdAt: -1 },
+        },
+      })
+    res.send(conversation)
   })
 )
 
